@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="robots" content="noindex,nofollow,noarchive,nosnippet,noai,noimageai">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>실전 롤플레이 | 4&7 NEXT</title>
+<style>
+/* 4&7 NEXT 허브 도구 공통 모양(roleplay.html 과 같은 글꼴·색) */
+@font-face{font-family:'Freesentation';src:url('../fonts/Freesentation-4Regular.ttf') format('truetype');font-weight:400}
+@font-face{font-family:'Freesentation';src:url('../fonts/Freesentation-7Bold.ttf') format('truetype');font-weight:700}
+:root{--ink:#0a0b0d;--sub:#5b616e;--line:#dee1e6;--bg:#f7f8fa;--card:#fff;--acc:#0052FF;--warn:#E5322D}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Freesentation',system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.55}
+[hidden]{display:none!important}
+.wrap{max-width:860px;margin:0 auto;padding:22px 18px 60px}
+header.top{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end;margin-bottom:14px}
+.brand{font-size:13px;color:var(--sub);text-decoration:none}
+h1{margin:2px 0 6px;font-size:clamp(24px,3.2vw,32px);letter-spacing:-.02em}
+.lead{margin:0;color:var(--sub);max-width:640px}
+.nav a{display:inline-block;margin:2px;padding:6px 12px;border:1px solid var(--line);border-radius:100px;color:inherit;text-decoration:none;font-size:13px;background:#fff}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:18px 20px;box-shadow:0 1px 2px rgba(10,11,13,.04),0 8px 24px rgba(10,11,13,.04);margin-bottom:16px}
+.panel h2{font-size:17px;margin:0 0 10px}
+label.f{display:flex;flex-direction:column;font-size:13px;color:var(--sub);gap:3px;margin-bottom:8px;min-width:0}
+select,input,textarea{font:inherit;font-size:14px;color:var(--ink);padding:8px 10px;border:1px solid var(--line);border-radius:12px;background:#fff;width:100%}
+input[type=checkbox],input[type=range]{width:auto;padding:0}
+select:focus,input:focus,textarea:focus{outline:0;border-color:var(--acc);box-shadow:0 0 0 3px rgba(0,82,255,.12)}
+textarea{resize:vertical}
+.g2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px}
+.g3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 12px}
+@media(max-width:640px){.g3,#castGrid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+.stages{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}
+@media(max-width:640px){.stages{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stages button{font:inherit;text-align:left;padding:12px 14px;border:1px solid var(--line);border-radius:16px;background:#fff;cursor:pointer}
+.stages button b{display:block;font-size:17px}.stages button span{font-size:12.5px;color:var(--sub)}
+.stages button.on{background:var(--ink);border-color:var(--ink);color:#fff}.stages button.on span{color:rgba(255,255,255,.75)}
+.btn{font:inherit;font-size:14px;padding:9px 16px;border-radius:100px;border:1px solid var(--line);background:#fff;cursor:pointer;text-decoration:none;color:inherit;display:inline-block}
+.btn.p{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn:disabled{opacity:.5;cursor:default}
+.go{width:100%;font:inherit;font-size:18px;font-weight:700;padding:16px;border-radius:100px;border:0;background:var(--acc);color:#fff;cursor:pointer;margin-top:6px}
+.go:disabled{opacity:.5}
+.hint{font-size:12.5px;color:var(--sub);margin:6px 0 0}
+.tip{font-size:13px;background:#eef3ff;border-radius:12px;padding:9px 12px;margin:10px 0}
+details.cset summary{cursor:pointer;font-weight:700;font-size:15px}
+.rng{display:flex;align-items:center;gap:8px}.rng input{flex:1}.rng span{font-size:12px;color:var(--sub);min-width:44px;text-align:right}
+label.ck{display:flex;gap:8px;align-items:flex-start;font-size:13px;color:var(--sub);margin:6px 0}
+/* 결과 */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin:12px 0}
+.stat{background:var(--bg);border-radius:14px;padding:12px 14px}
+.stat b{display:block;font-size:24px;line-height:1.2;font-variant-numeric:tabular-nums}.stat span{font-size:12px;color:var(--sub)}
+audio{width:100%;margin:6px 0 4px}
+.log{display:flex;flex-direction:column;gap:8px;max-height:460px;overflow:auto;padding:4px 2px;margin-top:10px}
+.b{max-width:84%;padding:9px 13px;border-radius:18px;white-space:pre-wrap;word-break:keep-all;overflow-wrap:anywhere}
+.b.me{align-self:flex-end;background:var(--acc);color:#fff;border-bottom-right-radius:4px}
+.b.ai{align-self:flex-start;background:#f0f2f5;border-bottom-left-radius:4px}
+.b .w{font-size:11px;opacity:.75;display:flex;gap:8px;align-items:center;margin-bottom:2px}
+.b .w button{font:inherit;font-size:11px;border:1px solid rgba(255,255,255,.6);background:transparent;color:inherit;border-radius:100px;padding:1px 8px;cursor:pointer}
+.fb table{border-collapse:collapse;width:100%;font-size:13px}.fb th,.fb td{border:1px solid var(--line);padding:4px 6px;text-align:left}
+.fb h3{font-size:16px;margin:12px 0 6px}.score{font-size:28px;font-weight:700;color:var(--acc)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* ===== 미팅 화면 ===== */
+#callUI{position:fixed;inset:0;z-index:9000;background:#0a0b0d;color:#fff;display:none;user-select:none}
+#callUI.on{display:block}
+#callUI .scene{position:absolute;inset:0;background:#0a0b0d center/cover no-repeat;opacity:0;transform:scale(1.07);transition:opacity 1.4s ease,transform 12s ease-out}
+#callUI.live .scene{opacity:1;transform:scale(1)}
+#callUI .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,11,13,.6) 0%,rgba(10,11,13,0) 26%,rgba(10,11,13,.1) 55%,rgba(10,11,13,.9) 100%)}
+#callUI .topbar{position:absolute;left:0;right:0;top:0;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;padding:calc(env(safe-area-inset-top,0px) + 22px) 26px 0}
+#callUI .meta b{display:block;font-size:20px}#callUI .meta span{font-size:14px;opacity:.8}
+#callUI .timer{font-size:20px;font-variant-numeric:tabular-nums;font-weight:700;display:flex;align-items:center;gap:8px}
+#callUI .timer i{width:9px;height:9px;border-radius:50%;background:#E5322D;animation:recblink 1.2s infinite}
+@keyframes recblink{50%{opacity:.25}}
+#callUI .count{position:absolute;inset:0;display:grid;place-items:center;text-align:center;background:#0a0b0d;transition:opacity .7s}
+#callUI.live .count{opacity:0;pointer-events:none}
+#callUI .count .what{font-size:21px;font-weight:700;margin-bottom:6px}
+#callUI .count .num{font-size:min(34vh,240px);font-weight:700;line-height:1.05;font-variant-numeric:tabular-nums}
+#callUI .count .num.pop{animation:pop .95s ease}
+@keyframes pop{0%{transform:scale(1.5);opacity:0}25%{transform:scale(1);opacity:1}80%{opacity:1}100%{opacity:.2}}
+#callUI .count .who{font-size:15px;opacity:.75;margin-top:10px;max-width:30em;padding:0 20px}
+#callUI .stage{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 112px);display:flex;flex-direction:column;align-items:center;gap:12px;padding:0 20px;text-align:center}
+#callUI .pulse{position:relative;width:74px;height:74px;border-radius:50%;background:rgba(255,255,255,.14);display:grid;place-items:center;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+#callUI .pulse::before,#callUI .pulse::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid rgba(255,255,255,.55);opacity:0}
+#callUI[data-s=listen] .pulse{background:rgba(0,82,255,.8)}
+#callUI[data-s=listen] .pulse::before{animation:ring 1.6s infinite}
+#callUI[data-s=speak] .pulse{background:rgba(255,255,255,.92)}
+#callUI[data-s=speak] .pulse::before{animation:ring 1s infinite}#callUI[data-s=speak] .pulse::after{animation:ring 1s .5s infinite}
+#callUI[data-s=think] .pulse{animation:breath 1.4s infinite}
+@keyframes ring{0%{transform:scale(1);opacity:.8}100%{transform:scale(1.9);opacity:0}}
+@keyframes breath{50%{transform:scale(.88);opacity:.6}}
+#callUI .bars{display:flex;gap:4px;align-items:center;height:28px}
+#callUI .bars i{width:4px;height:6px;border-radius:2px;background:#fff}
+#callUI[data-s=speak] .bars i{background:#0a0b0d}
+#callUI .stxt{font-size:16px;font-weight:700;text-shadow:0 1px 8px rgba(0,0,0,.7);min-height:1.5em}
+#callUI .cap{max-width:44em;min-height:1.6em;font-size:19px;line-height:1.5;text-shadow:0 1px 10px rgba(0,0,0,.85)}
+#callUI .cap.off{visibility:hidden}
+#callUI .cap small{display:block;font-size:13px;opacity:.7}
+#callUI .ctrl{position:absolute;left:0;right:0;bottom:calc(env(safe-area-inset-bottom,0px) + 28px);display:flex;justify-content:center;gap:12px;flex-wrap:wrap;padding:0 12px}
+#callUI .cb{font:inherit;font-size:14px;font-weight:700;padding:13px 20px;border-radius:100px;border:1px solid rgba(255,255,255,.4);background:rgba(10,11,13,.45);color:#fff;cursor:pointer;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+#callUI .cb.on{background:#fff;color:#0a0b0d;border-color:#fff}
+#callUI .cb.end{background:#E5322D;border-color:#E5322D;padding:13px 30px}
+#callUI .cb:disabled{opacity:.35}
+@media(max-width:600px){#callUI .topbar{padding-inline:16px}#callUI .cap{font-size:16px}#callUI .cb{padding:11px 14px;font-size:13px}}
+@media (prefers-reduced-motion:reduce){#callUI .scene{transition:opacity .3s;transform:none}#callUI .count .num.pop{animation:none}}
+#cScene video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s}
+#cScene video.on{opacity:1}
+</style>
+</head>
+<body>
+<!-- 4&7 NEXT 입구 (build_site.py가 모든 페이지 body 맨 앞에 넣음. ../config.json = config.json 경로)
+     11/23: 개인 아이디 추가. 브라우저에는 «아이디:비밀번호» 를 team_pass 로 기억 (팀 공용 비밀번호는 아이디 없이) -->
+<div id="g47" style="position:fixed;inset:0;z-index:2147483000;background:#0a0b0d;display:grid;place-items:center;font-family:Pretendard,'Malgun Gothic',system-ui,sans-serif">
+  <form id="g47f" style="background:#fff;border:0;border-radius:24px;padding:28px 26px;width:min(340px,calc(100vw - 32px));box-shadow:0 6px 24px rgba(0,0,0,.06)">
+    <div style="font-weight:800;font-size:20px;color:#0a0b0d">4&amp;7 NEXT</div>
+    <div style="color:#5f6b66;font-size:14px;margin:6px 0 16px">받으신 아이디와 비밀번호를 넣어 주세요.</div>
+    <input id="g47i" type="text" autocomplete="username" autocapitalize="off" spellcheck="false" placeholder="아이디 (예: 홍길동)" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px;margin-bottom:8px">
+    <input id="g47p" type="password" autocomplete="current-password" placeholder="비밀번호" style="width:100%;box-sizing:border-box;padding:11px 12px;border:1px solid #dee1e6;border-radius:12px;font-size:16px">
+    <label style="display:flex;gap:6px;align-items:center;margin-top:10px;color:#5f6b66;font-size:13px"><input type="checkbox" id="g47k"> 이 기기에서 로그인 유지</label>
+    <button type="submit" style="margin-top:10px;width:100%;padding:11px;border:0;border-radius:100px;background:#0052FF;color:#fff;font-size:15px;font-weight:700;cursor:pointer">들어가기</button>
+    <div id="g47m" style="color:#E5322D;font-size:13px;margin-top:8px;min-height:1em"></div>
+    <div style="color:#8a938f;font-size:12px;margin-top:4px">운영진도 받은 아이디와 비밀번호로 들어오면 관리 메뉴가 함께 보여요.</div>
+  </form>
+</div>
+<script>(function(){var K='team_pass',CFG='../config.json',g=document.getElementById('g47'),m=document.getElementById('g47m'),v='';
+/* 11/24 상권 «한 번 로그인하면 자동으로 되는 게 불편»: «로그인 유지»를 안 고르면 브라우저(창)를 닫으면 다시 로그인 */
+try{var sm=location.search.match(/[?&]s=([a-z0-9]{8,20})/);if(sm){localStorage.setItem(K,sm[1]);localStorage.setItem('g47keep','1');sessionStorage.setItem('g47s','1');['team_id','team_name','team_staff'].forEach(function(k){localStorage.removeItem(k)});
+  history.replaceState(null,'',location.pathname+location.search.replace(/([?&])s=[a-z0-9]{8,20}&?/,'$1').replace(/[?&]$/,'')+location.hash)}}catch(e){}
+try{if(localStorage.getItem('g47keep')!=='1'&&!sessionStorage.getItem('g47s')){['team_pass','team_id','team_name','team_staff','hub-me'].forEach(function(k){localStorage.removeItem(k)})}}catch(e){}
+try{v=localStorage.getItem(K)||''}catch(e){}
+function ep(){return fetch(CFG,{cache:'no-store'}).then(function(r){return r.json()}).then(function(j){return String(j.endpoint||'').trim()}).catch(function(){return ''})}
+var dv='';try{dv=localStorage.getItem('g47dv')||'';if(!dv){dv=Math.random().toString(36).slice(2,10);localStorage.setItem('g47dv',dv)}}catch(e){}
+function keep(j){try{if(j&&j.id){localStorage.setItem('team_id',j.id);localStorage.setItem('team_name',j.name||j.id);
+  var me=null;try{me=JSON.parse(localStorage.getItem('hub-me')||'null')}catch(e){}
+  localStorage.setItem('hub-me',JSON.stringify({name:j.name,branch:j.branch||(j.staff?'운영진':''),boss:!!j.boss,staff:!!j.staff,id:j.id}))}
+  else{localStorage.removeItem('team_id');localStorage.removeItem('team_name')}
+  if(j&&j.staff)localStorage.setItem('team_staff','1');else localStorage.removeItem('team_staff')}catch(e){}}
+function check(p,k){var pg=(location.pathname.split('/').filter(Boolean).pop()||'hub')+(location.hash||'').slice(0,20);return ep().then(function(e){if(!e)return null;return fetch(e+'?action=passcheck&pass='+encodeURIComponent(p)+'&k='+(k||'auto')+'&pg='+encodeURIComponent(pg)+'&dv='+dv+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){if(j&&j.ok)keep(j);return j&&j.ok?true:false}).catch(function(){return null})})}
+function openTry(){if(/^#login/.test(location.hash))return Promise.resolve(false);
+  return ep().then(function(e){if(!e)return false;return fetch(e+'?action=passcheck&pass=&k=open&pg='+encodeURIComponent((location.pathname.split('/').filter(Boolean).pop()||'hub')+(location.hash||'').slice(0,20))+'&dv='+dv+'&r='+Date.now()).then(function(r){return r.json()}).then(function(j){
+    if(j&&j.ok&&j.open&&j.key){try{localStorage.setItem(K,j.key);localStorage.setItem('g47keep','1');sessionStorage.setItem('g47s','1');['team_id','team_name','team_staff','hub-me'].forEach(function(k){localStorage.removeItem(k)})}catch(e){}return true}return false}).catch(function(){return false})})}
+if(v){g.style.display='none';check(v).then(function(ok){if(ok===false){try{localStorage.removeItem(K)}catch(e){}openTry().then(function(o){if(o){location.reload()}else{g.style.display='grid';m.textContent='비밀번호가 바뀌었어요. 다시 넣어 주세요.'}})}})}
+else{g.style.visibility='hidden';openTry().then(function(o){if(o){g.style.display='none';location.reload()}else{g.style.visibility='visible';var i=document.getElementById('g47i');if(i)i.focus()}})}
+document.getElementById('g47f').addEventListener('submit',function(e){e.preventDefault();var id=document.getElementById('g47i').value.trim().toLowerCase(),p=document.getElementById('g47p').value.trim();if(!p)return;var t=id?id+':'+p:p;m.style.color='#5f6b66';m.textContent='확인 중…';
+  check(t,'new').then(function(ok){if(ok===false){m.style.color='#c0392b';m.textContent=id?'아이디 또는 비밀번호가 맞지 않아요.':'비밀번호가 맞지 않아요.';return}
+    if(ok===null){m.style.color='#c0392b';m.textContent='연결하지 못했어요. 잠시 후 다시 시도해 주세요.';return}
+    try{localStorage.setItem(K,t);sessionStorage.setItem('g47s','1');localStorage.setItem('g47keep',document.getElementById('g47k').checked?'1':'0')}catch(e){}g.style.display='none';try{location.reload()}catch(e){}})});
+})();</script>
+
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <span class="brand">4&amp;7 NEXT · 연습하기</span>
+      <h1>실전 롤플레이</h1>
+      <p class="lead">전화 약속부터 클로징까지, AI 대표님과 <b>말로만</b> 주고받는 연습입니다. 시작하면 화면이 미팅 자리로 바뀌고 버튼 없이 대화가 이어집니다. 끝나면 내 목소리를 다시 듣고 피드백을 받습니다.</p>
+    </div>
+    <div class="nav"><a href="../#home" target="_top">허브로</a><a href="../#tool-rplive-admin" target="_top">연습 기록 보기 (지점장)</a></div>
+  </header>
+
+  <div id="setup">
+    <section class="panel">
+      <h2>어느 단계를 연습할까요</h2>
+      <div class="stages" id="stages">
+        <button type="button" data-v="TA"><b>TA</b><span>전화로 약속 잡기</span></button>
+        <button type="button" data-v="AP" class="on"><b>AP</b><span>첫 미팅</span></button>
+        <button type="button" data-v="PC"><b>PC</b><span>제안 미팅</span></button>
+        <button type="button" data-v="CL"><b>클로징</b><span>계약 결정</span></button>
+      </div>
+      <div class="g3">
+        <label class="f">관계<select id="rel"><option value="기장">기장거래처</option><option value="소개">소개받은 자리</option><option value="초면">완전 초면</option></select></label>
+        <label class="f">난이도<select id="level"><option value="easy">쉬움 (호의적)</option><option value="mid" selected>보통 (반신반의)</option><option value="hard">어려움 (보험 싫어요)</option></select></label>
+        <label class="f">대표님 성향<select id="style"><option value="">고르지 않음</option><option>결론형</option><option>관계형</option><option>분석형</option><option>신중형</option></select></label>
+      </div>
+      <div class="tip" id="stageTip"></div>
+    </section>
+
+    <section class="panel">
+      <h2 class="row" style="justify-content:space-between">만날 대표님 <button type="button" class="btn" id="fromAp" style="font-size:13px;padding:6px 12px">업체 분석에 넣은 업체 불러오기</button></h2>
+      <div id="briefBox" hidden style="border:1px solid rgba(127,127,127,.35);border-radius:10px;padding:8px 10px;margin:0 0 10px;font-size:12.5px;line-height:1.5;background:rgba(127,127,127,.07)"><div style="display:flex;justify-content:space-between;gap:8px;align-items:center"><b>AI 대표님이 알고 나오는 업체 분석</b><button type="button" class="btn" id="briefX" style="font-size:12px;padding:3px 10px">빼기</button></div><pre id="briefTx" style="white-space:pre-wrap;margin:4px 0 0;font:inherit"></pre></div>
+      <div class="g3" style="grid-template-columns:repeat(4,minmax(0,1fr))" id="castGrid">
+        <label class="f">만나는 사람<select id="cast"><option value="m">남자 대표</option><option value="f">여자 대표</option><option value="mf" disabled>부부 (남편 대표 + 아내) — 두 목소리 준비 중</option><option value="fm" disabled>부부 (아내 대표 + 남편) — 두 목소리 준비 중</option></select></label>
+        <label class="f">업종<input id="ind" placeholder="예: 제조"></label>
+        <label class="f">형태<select id="form"><option>법인</option><option>개인사업자</option></select></label>
+        <label class="f">대표 나이<input id="age" type="number" inputmode="numeric"></label>
+        <label class="f">매출(억)<input id="sales" type="number" step="0.1" inputmode="decimal"></label>
+        <label class="f">당기순이익(억)<input id="profit" type="number" step="0.1" inputmode="decimal"></label>
+        <label class="f">자녀 수<input id="kids" type="number" inputmode="numeric"></label>
+      </div>
+      <label class="f">상황 (AI 대표가 속으로 가진 고민)<textarea id="notes" rows="3" placeholder="예: 내년 공장 이전 고민, 자녀는 사업에 관심 없음. 상호·실명은 쓰지 마세요."></textarea></label>
+      <label class="f">연습 시간 (시간이 되면 자동으로 끝나요)<select id="dur"><option value="10">10분</option><option value="20">20분</option><option value="30" selected>30분</option><option value="45">45분</option><option value="60">60분</option></select></label>
+      <div class="g2"><label class="f">연습하는 사람 (꼭 넣어 주세요)<input id="who" placeholder="이름 또는 호칭" required></label><label class="f">소속 지점<input id="branch" placeholder="예: 서울 1지점"></label></div>
+    </section>
+
+    <section class="panel">
+      <details class="cset">
+        <summary>소리 설정</summary>
+        <div class="g2" style="margin-top:10px">
+          <label class="f">실시간 대화 엔진<select id="preset"><option value="free">무료 시험</option></select></label>
+          <label class="f" hidden>대표님 목소리 (브라우저 목소리일 때)<select id="cVoice"></select></label>
+          <label class="f" hidden>말 빠르기<div class="rng"><input type="range" id="cRate" min="0.8" max="1.4" step="0.05" value="1.08"><span id="cRateV"></span></div></label>
+        </div>
+        <label class="f" hidden>내 말이 끝났다고 보는 침묵<div class="rng"><input type="range" id="cWait" min="0.5" max="2.6" step="0.1" value="0.9"><span id="cWaitV"></span></div></label>
+        <label class="ck" hidden><input type="checkbox" id="cEar"> 이어폰을 꼈어요 (대표님이 말하는 중에 내가 말하면 바로 끊고 듣습니다)</label>
+        <label class="ck" hidden><input type="checkbox" id="cFill" checked> 대표님 맞장구 ("음…", "네네"로 생각하는 틈을 메웁니다)</label>
+        <label class="ck"><input type="checkbox" id="cRec" checked> 내 목소리 녹음 (끝난 뒤 다시 듣고 내려받을 수 있어요)</label>
+        <button type="button" id="cTest" hidden></button>
+        <p style="font-size:13px;color:#5b616e;margin:8px 0 0">이어폰을 끼고 하시면 대표 목소리가 마이크로 다시 들어가지 않아 더 자연스러워요.</p>
+        <p class="hint" id="cHint"></p>
+      </details>
+    </section>
+
+    <button type="button" class="go" id="go">시작하기</button>
+    <p class="hint" id="state"></p>
+    <p class="hint">상호·고객 실명은 서버로 보내지 않습니다(업종·숫자·상황만). 대화와 피드백은 팀 기록 시트에 남아 지점장이 볼 수 있습니다. 음성 대화는 노트북 크롬·엣지에서 됩니다.</p>
+  </div>
+
+  <div id="result" hidden>
+    <section class="panel" id="rv"></section>
+    <section class="panel fb" id="fb"></section>
+    <div class="row"><button type="button" class="btn p" id="again">같은 조건으로 다시</button><button type="button" class="btn" id="back">설정 바꾸기</button></div>
+  </div>
+</div>
+
+<div id="callUI" data-s="idle" aria-live="polite">
+  <div class="scene" id="cScene"><video id="vListen" muted loop playsinline preload="auto"></video><video id="vTalk" muted loop playsinline preload="auto"></video></div><div class="shade"></div>
+  <div class="topbar">
+    <div class="meta"><b id="cTitle"></b><span id="cSub"></span></div>
+    <div class="timer"><i id="cDot"></i><span id="cTime">00:00</span></div>
+  </div>
+  <div class="stage">
+    <div class="pulse"><div class="bars" id="cBars"><i></i><i></i><i></i><i></i><i></i></div></div>
+    <div class="stxt" id="cState"></div>
+    <div class="cap off" id="cCap"></div>
+  </div>
+  <div class="ctrl">
+    <button type="button" class="cb" id="cCapBtn">자막 켜기</button>
+    <button type="button" class="cb" id="cCut">말 끊고 내가 말하기</button>
+    <button type="button" class="cb end" id="cEnd">끝내기</button>
+  </div>
+  <div class="count" id="cCount"><div><div class="what" id="cWhat"></div><div class="num" id="cNum">3</div><div class="who" id="cWho"></div></div></div>
+</div>
+
+<script>
+/* 실전 롤플레이 — 브라우저 기본 기능만 쓴다(추가 비용 없음)
+   받아쓰기 SpeechRecognition · 읽어 주기 speechSynthesis · 녹음 MediaRecorder
+   서버는 허브의 기존 롤플레이와 같은 통신을 쓴다: POST {action:'rp', pass, mode, rel, level, style, case, who, history[, end]} */
+(function(){
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+const KEY = 'rp-live-v2';
+let BRIEF = '';   /* 11/25: AP 단계에서 열면 업체 분석 요약(숫자·꺼낼 이슈 순서·예상 반론)을 AI 대표에게 같이 보냄 */
+function showBrief(){ const b = $('briefBox'); if (!b) return; b.hidden = !BRIEF; $('briefTx').textContent = BRIEF; }
+function pickBrief(card){ try { const br = JSON.parse(localStorage.getItem('ap-brief-v0') || 'null'); BRIEF = br && br.text && (!br.co || !card.co || br.co === card.co) ? String(br.text).slice(0, 1500) : ''; } catch (e) { BRIEF = ''; } showBrief(); }
+const FIELDS = ['preset','dur','cast','rel','level','style','ind','form','sales','profit','age','kids','notes','who','branch','cRate','cWait'];
+const CHECKS = ['cEar','cFill','cRec'];
+let EP = 'https://script.google.com/macros/s/AKfycbyIF7r-0sSli3iIURIsnNQRefQU1lBbLo0iGA7lcraRYIlM-atbwNc-skKfC9dgU3nM2Q/exec', stage = 'AP', hist = [];
+const TP = () => { try { return localStorage.getItem('team_pass') || ''; } catch (e) { return ''; } };
+
+/* 단계: 서버가 아직 단계를 모르므로 지시문을 '상황' 앞에 붙여 보낸다. 서버에 stage 처리가 생기면 note 는 빼도 된다 */
+const STAGE = {
+  TA: { name: 'TA · 전화로 약속 잡기', tip: '전화가 연결되면 대표님이 "여보세요"로 받습니다. 3분 안에, 내용 설명 없이 만날 명분과 날짜·시간만 잡아 보세요.', first: '전화가 연결되면 먼저 인사하세요',
+        note: '[연습 단계: TA 전화 약속잡기] 지금은 미팅이 아니라 전화 통화다. 대표는 일하는 중에 전화를 받았고 용건을 짧게 듣고 싶어 한다. 만날 명분이 분명하고 부담이 없으면 날짜와 시간을 잡아 주고, 전화로 내용을 길게 설명하려 하면 바쁘다며 끊으려 한다.' },
+  AP: { name: 'AP · 첫 미팅', tip: '자리에 앉으면 먼저 인사하며 시작하세요. 상품명은 꺼내지 말고, 질문으로 대표님의 목표·가족·고민을 끌어낸 뒤 다음 약속과 소개요청까지 가 보세요.', first: '자리에 앉으면 먼저 인사하세요', note: '' },
+  PC: { name: 'PC · 제안 미팅', tip: '두 번째 만남입니다. 지난번에 들은 고민을 되짚고, 해결책과 금액을 숫자로 제안해 보세요.', first: '지난번 이야기를 되짚으며 시작하세요',
+        note: '[연습 단계: PC 제안 미팅] 첫 미팅은 이미 했고 오늘은 두 번째 만남이다. 지난번에 말한 고민의 해결책과 금액 제안을 듣는 자리다. 대표는 숫자의 근거, 비용 부담, 다른 방법은 없는지를 따진다. 이 단계에서는 상품 이야기가 나와도 자연스럽다.' },
+  CL: { name: '클로징 · 계약 결정', tip: '제안은 끝났고 결정만 남았습니다. 망설임을 듣고, 서류 일정을 묻는 데까지 가 보세요.', first: '결정을 돕는 말로 시작하세요',
+        note: '[연습 단계: 클로징] 제안은 이미 들었고 결정을 앞둔 자리다. 대표는 "생각해 볼게요", "아내와 상의해 보겠다", "금액이 부담된다" 같은 마지막 망설임을 보인다. 충분히 납득되면 서류 일정에 동의한다.' }
+};
+const CAST = {
+  m: { who: '대표님', note: '[만나는 사람] 대표는 남자다.', sp: [['대표', 'm']] },
+  f: { who: '대표님', note: '[만나는 사람] 대표는 여자다.', sp: [['대표', 'f']] },
+  mf: { who: '두 분', note: '[만나는 사람: 부부 두 사람] 남편이 대표이고, 아내가 함께 앉아 회사 살림(자금·경리)을 맡는다. 두 사람이 번갈아 말하며 생각이 조금 다르다. 아내는 가계와 자녀, 돈이 실제로 나가는 것을 더 따진다. 말할 때마다 반드시 줄 맨 앞에 "대표:" 또는 "사모:"를 붙이고, 한 번에 한 사람 또는 두 사람이 한 줄씩만 말한다.', sp: [['대표', 'm'], ['사모', 'f']] },
+  fm: { who: '두 분', note: '[만나는 사람: 부부 두 사람] 아내가 대표이고, 남편이 함께 앉아 현장(영업·생산)을 맡는다. 두 사람이 번갈아 말하며 생각이 조금 다르다. 말할 때마다 반드시 줄 맨 앞에 "대표:" 또는 "남편:"을 붙이고, 한 번에 한 사람 또는 두 사람이 한 줄씩만 말한다.', sp: [['대표', 'f'], ['남편', 'm']] }
+};
+const cast = () => CAST[$('cast').value] || CAST.m;
+const TALK = '[말하는 방식] 실제로 마주 앉아 말하듯 한 번에 한두 문장만 짧게 말한다. 괄호 설명, 글머리표, 번호 목록은 쓰지 않는다.';
+
+function save(){ try { const o = { stage }; FIELDS.forEach(k => o[k] = $(k).value); CHECKS.forEach(k => o[k] = $(k).checked); o.voice = $('cVoice').value; o.brief = BRIEF; localStorage.setItem(KEY, JSON.stringify(o)); } catch (e) {} }
+function load(){ try { const o = JSON.parse(localStorage.getItem(KEY) || 'null'); if (!o) return {}; FIELDS.forEach(k => { if (o[k] != null && o[k] !== '') $(k).value = o[k]; }); CHECKS.forEach(k => { if (o[k] != null) $(k).checked = o[k]; }); if (o.stage && STAGE[o.stage]) stage = o.stage; BRIEF = String(o.brief || ''); showBrief(); return o; } catch (e) { return {}; } }
+function setStage(v){ stage = v; document.querySelectorAll('#stages button').forEach(b => b.classList.toggle('on', b.dataset.v === v)); $('stageTip').textContent = STAGE[v].tip; save(); }
+function showRanges(){ $('cRateV').textContent = (+$('cRate').value).toFixed(2) + '배'; $('cWaitV').textContent = (+$('cWait').value).toFixed(1) + '초'; }
+function caseObj(){ return { ind: $('ind').value, form: $('form').value, sales: $('sales').value, profit: $('profit').value, age: $('age').value, kids: $('kids').value, notes: [STAGE[stage].note, cast().note, TALK, $('notes').value].filter(Boolean).join('\n'), brief: BRIEF }; }
+function post(o){ return fetch(EP, { method: 'POST', body: JSON.stringify(Object.assign({ action: 'rp2', sub: 'end', usage: L.usage, preset: $('preset').value, pass: TP(), mode: 'ceo', stage, cast: $('cast').value, rel: $('rel').value, level: $('level').value, style: $('style').value, case: caseObj(), who: $('who').value.trim(), branch: $('branch').value.trim() }, o)) }).then(r => r.json()); }
+const wire = () => hist.filter(m => !m.local).map(m => ({ role: m.role, text: m.text }));
+function ready(){
+  if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia) || (!SR && !isLive())) { $('state').textContent = '이 브라우저에서는 마이크를 쓸 수 없어요. 크롬이나 엣지로 열어 주세요 (카톡 안에서 열었다면 «다른 브라우저로 열기»).'; return false; }
+  if (!EP) { $('state').textContent = '서버 주소가 없어 시작할 수 없어요.'; return false; }
+  return true;
+}
+
+/* ---------- 목소리 ---------- */
+let voices = [], wantVoice = '';
+function loadVoices(){
+  if (!window.speechSynthesis) return;
+  const score = v => (/natural|online|neural/i.test(v.name) ? 4 : 0) + (/google/i.test(v.name) ? 3 : 0) + (/premium|enhanced|고급|프리미엄/i.test(v.name) ? 3 : 0) + (/siri/i.test(v.name) ? 2 : 0);
+  voices = speechSynthesis.getVoices().filter(v => /^ko/i.test(v.lang)).sort((a, b) => score(b) - score(a));
+  const keep = $('cVoice').value || wantVoice;
+  $('cVoice').innerHTML = voices.length ? voices.map(v => `<option value="${esc(v.name)}">${esc(v.name.replace(/Microsoft |Google /g, ''))}${score(v) >= 3 ? ' · 자연스러움' : ''}</option>`).join('') : '<option value="">기본 목소리</option>';
+  if (keep && voices.some(v => v.name === keep)) $('cVoice').value = keep;
+  fitVoice();
+  $('cHint').textContent = voices.some(v => score(v) >= 3) ? '' : '이 브라우저에는 기본 목소리만 있어요. 엣지(Edge)로 열면 더 사람 같은 목소리(Natural)를 고를 수 있습니다.';
+}
+const clean = t => String(t).replace(/\([^)]*\)|\[[^\]]*\]|\*+|#+|^\s*[-•]\s*/gm, ' ').replace(/\s+/g, ' ').trim();
+const isMale = v => /injoon|인준|minsu|민수|hyunsu|현수|bongjin|봉진|gookmin|국민|eddy|grandpa|reed|rocko|male|남성|남자/i.test(v.name) && !/female|여성/i.test(v.name);
+/* 만나는 사람의 성별·나이에 맞는 목소리를 고른다. 맞는 목소리가 아예 없을 때만 높낮이를 바꾼다 */
+const mainG = () => cast().sp[0][1];
+function bestVoice(g, not){
+  const old = +$('age').value >= 62, pool = voices.filter(x => isMale(x) === (g === 'm') && x !== not);
+  return pool.find(x => /grand/i.test(x.name) === old) || pool[0];
+}
+function fitVoice(force){                      /* 고른 목소리가 상대 성별과 다르면 맞는 목소리로 바꿔 둔다 */
+  const sel = voices.find(x => x.name === $('cVoice').value), g = mainG();
+  if (!force && sel && isMale(sel) === (g === 'm')) return;
+  const b = bestVoice(g); if (b) $('cVoice').value = b.name;
+}
+function voiceFor(g, main){
+  const sel = voices.find(x => x.name === $('cVoice').value);
+  if (main && sel && isMale(sel) === (g === 'm')) return { v: sel, pitch: 1 };
+  const hit = bestVoice(g, main ? null : sel) || bestVoice(g);
+  return hit ? { v: hit, pitch: 1 } : { v: sel || voices[0], pitch: g === 'm' ? 0.7 : 1.2 };
+}
+/* "대표: … / 사모: …" 로 온 답을 화자별로 나눈다 */
+function segments(text){
+  const sp = cast().sp, names = sp.map(x => x[0]).concat(['아내', '부인', '사모님', '대표님', '남편분']);
+  const re = new RegExp('(?:^|\\n|\\s)(' + names.join('|') + ')\\s*[:：]', 'g');
+  const out = []; let last = 0, cur = sp[0][0], m;
+  const norm = n => /사모|아내|부인/.test(n) ? '사모' : /남편/.test(n) ? '남편' : '대표';
+  while ((m = re.exec(text))) { const t = text.slice(last, m.index).trim(); if (t) out.push([cur, t]); cur = norm(m[1]); last = re.lastIndex; }
+  const t = text.slice(last).trim(); if (t) out.push([cur, t]);
+  return out.map(([n, t]) => { const i = Math.max(0, sp.findIndex(x => x[0] === n)); return { name: sp[i][0], g: sp[i][1], main: i === 0, text: t }; });
+}
+let gen = 0;
+/* 문장 단위로 줄 세워 읽는다 → 첫 소리가 빨리 나오고, 중간에 끊기 쉽다 */
+function say(text, done){
+  const my = ++gen, parts = [];
+  segments(text).forEach(sg => { const vp = voiceFor(sg.g, sg.main); (clean(sg.text).match(/[^.!?…]+[.!?…]*/g) || []).forEach(p => parts.push({ p: p.trim(), vp, name: sg.name })); });
+  if (!window.speechSynthesis || !parts.length) { setTimeout(() => { if (my === gen) done && done(); }, 300); return; }
+  let left = parts.length;
+  const fin = () => { if (my !== gen) return; gen++; done && done(); };
+  parts.forEach(x => { const u = new SpeechSynthesisUtterance(x.p); u.lang = 'ko-KR'; if (x.vp.v) u.voice = x.vp.v; u.rate = +$('cRate').value; u.pitch = x.vp.pitch;
+    u.onstart = () => { if (my === gen && onSpeaker) onSpeaker(x.name, x.p); };
+    u.onend = u.onerror = () => { if (my === gen && --left <= 0) fin(); }; speechSynthesis.speak(u); });
+  const wd = setInterval(() => { if (my !== gen) return clearInterval(wd); if (!speechSynthesis.speaking && !speechSynthesis.pending) { clearInterval(wd); setTimeout(fin, 150); } }, 400);   /* 끝 신호가 안 오는 브라우저 대비 */
+}
+let onSpeaker = null;
+/* 문장이 도착하는 대로 바로 읽는 줄 (답 전체를 기다리지 않는다) */
+function talker(done){
+  const my = ++gen, sp = cast().sp; let pending = 0, closed = false, cur = sp[0], wd = null, chain = Promise.resolve();
+  const fin = () => { clearInterval(wd); if (my !== gen) return; gen++; done && done(); };
+  const check = () => { if (closed && pending <= 0) fin(); };
+  return {
+    push(p){
+      if (my !== gen) return;
+      const m = p.match(/^\s*(대표님?|사장님?|사모님?|아내|부인|남편분?)\s*[:：]\s*/);
+      if (m) { const n = /사모|아내|부인/.test(m[1]) ? '사모' : /남편/.test(m[1]) ? '남편' : '대표'; cur = sp.find(x => x[0] === n) || sp[0]; p = p.slice(m[0].length); }
+      p = clean(p).replace(/^["“”']+|["“”']+$/g, ''); if (!p) return;
+      const name = cur[0];
+      if (ttsMode() !== 'browser') {                       /* 고급 목소리: 문장마다 서버에서 소리를 받아 순서대로 튼다 */
+        pending++; const g = cur[1], prev = chain;
+        const got = fetch(EP + '/tts', { method: 'POST', body: JSON.stringify({ preset: $('preset').value, text: p, g, old: +$('age').value >= 62, rate: +$('cRate').value }) }).then(r => r.ok ? r.blob() : null).catch(() => null);
+        chain = Promise.all([prev, got]).then(([, b]) => new Promise(res => {
+          if (my !== gen) return res();
+          const done1 = () => { pending--; res(); check(); };
+          if (!b) { const u = new SpeechSynthesisUtterance(p); u.lang = 'ko-KR'; const vp = voiceFor(g, cur === sp[0]); if (vp.v) u.voice = vp.v; u.onstart = () => { if (my === gen && onSpeaker) onSpeaker(name, p); }; u.onend = u.onerror = done1; return speechSynthesis.speak(u); }
+          const a = new Audio(URL.createObjectURL(b)); nowAudio = a; a.onplay = () => { if (my === gen && onSpeaker) onSpeaker(name, p); }; a.onended = a.onerror = done1; a.play().catch(done1);
+        }));
+        return;
+      }
+      const vp = voiceFor(cur[1], cur === sp[0]), u = new SpeechSynthesisUtterance(p);
+      u.lang = 'ko-KR'; if (vp.v) u.voice = vp.v; u.rate = +$('cRate').value; u.pitch = vp.pitch; pending++;
+      u.onstart = () => { if (my === gen && onSpeaker) onSpeaker(name, p); };
+      u.onend = u.onerror = () => { pending--; check(); }; speechSynthesis.speak(u);
+    },
+    end(){ closed = true; check(); if (ttsMode() === 'browser') wd = setInterval(() => { if (my !== gen) return clearInterval(wd); if (!speechSynthesis.speaking && !speechSynthesis.pending) setTimeout(fin, 150); }, 400); }
+  };
+}
+let nowAudio = null, PRESETS = [];
+const ttsMode = () => (PRESETS.find(x => x.id === $('preset').value) || {}).tts || 'browser';
+function hush(){ gen++; try { speechSynthesis.cancel(); } catch (e) {} try { nowAudio && nowAudio.pause(); } catch (e) {} nowAudio = null; }
+
+/* ---------- 대화 엔진 ---------- */
+const c = { on: false, s: 'idle', rec: null, base: '', text: '', silT: null, fillT: null, t0: 0, tick: null, turnStart: 0, stream: null, mr: null, chunks: [], url: '', actx: null, an: null, raf: 0, ear: false, cap: false, id: 0 };
+function sceneVideo(img){                /* 대표가 듣는 중·말하는 중에 맞춰 영상을 바꿔 튼다. 영상이 없으면 사진 그대로 */
+  const base = img.replace(/\.jpg$/, ''); V.ok = { listen: false, talk: false };
+  [['listen', 'vListen'], ['talk', 'vTalk']].forEach(([k, id]) => { const v = $(id); v.classList.remove('on'); v.oncanplay = () => { V.ok[k] = true; vSync(); }; v.onerror = () => { V.ok[k] = false; }; v.src = base + '-' + k + '.mp4'; v.load(); });
+}
+const V = { ok: { listen: false, talk: false } };
+function vSync(){
+  const talk = c.s === 'speak' && V.ok.talk, show = talk ? 'vTalk' : (V.ok.listen ? 'vListen' : (V.ok.talk ? 'vTalk' : ''));
+  ['vListen', 'vTalk'].forEach(id => { const v = $(id); if (id === show) { v.classList.add('on'); v.play().catch(() => {}); } else { v.classList.remove('on'); } });
+}
+function cstate(s, msg){ c.s = s; $('callUI').dataset.s = s; $('cState').textContent = msg != null ? msg : ({ listen: '듣고 있어요', think: cast().who + '이 생각 중…', speak: '대표님이 말하는 중' }[s] || ''); $('cCut').disabled = s !== 'speak'; try { vSync(); } catch (e) {} }
+function caption(who, t){ $('cCap').innerHTML = t ? `<small>${who}</small>${esc(t)}` : ''; }
+
+function recStart(){
+  if (c.rec || !c.on) return;
+  const r = new SR(); r.lang = 'ko-KR'; r.interimResults = true; r.continuous = true; c.rec = r;
+  r.onresult = e => {
+    let t = ''; for (let i = 0; i < e.results.length; i++) t += e.results[i][0].transcript;
+    t = (c.base + ' ' + t).trim(); if (!t) return;
+    if (c.s === 'speak') { if (!c.ear || t.replace(/\s/g, '').length < 2) return; hush(); cstate('listen'); }   /* 말로 끼어들기 (이어폰) */
+    if (c.s !== 'listen') return;
+    if (!c.text) c.turnStart = Date.now();
+    c.text = t; caption('나', t);
+    clearTimeout(c.silT); c.silT = setTimeout(endTurn, +$('cWait').value * 1000);
+  };
+  r.onend = () => { if (c.rec !== r) return; c.rec = null; if (c.on && (c.s === 'listen' || (c.s === 'speak' && c.ear))) { c.base = c.s === 'listen' ? c.text : ''; setTimeout(recStart, 120); } };
+  r.onerror = e => { if (e.error === 'not-allowed' || e.error === 'service-not-allowed') cstate('idle', '마이크 사용을 허락해 주세요'); };
+  try { r.start(); } catch (e) { c.rec = null; }
+}
+function recStop(){ clearTimeout(c.silT); const r = c.rec; c.rec = null; if (r) { try { r.abort(); } catch (e) {} } }
+function listen(){ if (!c.on) return; recStop(); c.base = ''; c.text = ''; caption('', ''); cstate('listen'); recStart(); }
+
+const FILL = { easy: ['네네.', '아, 네.', '음, 그렇죠.'], mid: ['음…', '글쎄요…', '아…'], hard: ['흠…', '뭐…', '글쎄…'] };
+function endTurn(){
+  const t = c.text.trim(); if (!c.on || c.s !== 'listen' || !t) return;
+  recStop();
+  hist.push({ role: 'user', text: t, at: (c.turnStart - c.t0) / 1000, dur: Math.max(1, (Date.now() - c.turnStart) / 1000 - +$('cWait').value) });
+  ask();
+}
+function ask(){
+  cstate('think'); clearTimeout(c.fillT); const my = c.id, tEnd = performance.now();
+  if ($('cFill').checked && hist.length > 1 && ttsMode() === 'browser') c.fillT = setTimeout(() => { if (c.on && c.s === 'think') { const a = FILL[$('level').value] || FILL.mid; say(a[Math.floor(Math.random() * a.length)]); } }, 1100);
+  const fail = msg => { if (!c.on || my !== c.id) return; clearTimeout(c.fillT); hist.pop(); cstate('idle', msg); setTimeout(listen, 2600); };
+  if (EP.charAt(0) !== '/') return post({ history: wire() }).then(r => {          /* 한 번에 받는 서버 */
+    if (!c.on || my !== c.id) return; clearTimeout(c.fillT);
+    if (!r.ok) return fail((r.error || '답을 받지 못했어요.') + ' 다시 말씀해 보세요.');
+    hist.push({ role: 'assistant', text: r.text, at: (Date.now() - c.t0) / 1000 }); speak(r.text);
+  }).catch(() => fail('서버에 연결하지 못했어요. 다시 말씀해 보세요.'));
+  /* 글자가 나오는 대로 받아 첫 문장부터 바로 말한다 */
+  let buf = '', full = '', tk = null, lat = 0; const two = cast().sp.length > 1, lab = n => n === '대표' ? '대표님' : n === '사모' ? '사모님' : '남편분';
+  const emit = p => {
+    if (!p.trim()) return;
+    if (!tk) { clearTimeout(c.fillT); cstate('speak'); let first = true;
+      onSpeaker = (name, q) => { if (!c.on || c.s !== 'speak') return; if (first) { first = false; lat = Math.round(performance.now() - tEnd); const h = hist[hist.length - 1]; if (h && h.role === 'assistant') h.lat = lat; }
+        if (two) $('cState').textContent = lab(name) + '이 말하는 중'; caption(lab(name), q); };
+      tk = talker(() => { if (c.on && my === c.id) listen(); }); }
+    tk.push(p);
+  };
+  const feed = last => { let m; while ((m = buf.match(/[.!?…]+["”']?\s|\n/))) { emit(buf.slice(0, m.index + m[0].length)); buf = buf.slice(m.index + m[0].length); } if (last && buf.trim()) { emit(buf); buf = ''; } };
+  c.ac = new AbortController();
+  fetch(EP + '/stream', { method: 'POST', signal: c.ac.signal, body: JSON.stringify({ action: 'rp', preset: $('preset').value, mode: 'ceo', stage, cast: $('cast').value, rel: $('rel').value, level: $('level').value, style: $('style').value, case: caseObj(), who: $('who').value.trim(), branch: $('branch').value.trim(), history: wire() }) }).then(async r => {
+    if (!r.ok) { const j = await r.json().catch(() => ({})); return fail((j.error || '답을 받지 못했어요.')); }
+    const rd = r.body.getReader(), dec = new TextDecoder();
+    for (;;) { const { done, value } = await rd.read(); if (done) break; if (!c.on || my !== c.id) return; const t = dec.decode(value, { stream: true }); full += t; buf += t; feed(false); }
+    if (!c.on || my !== c.id) return;
+    if (!full.trim()) return fail('답을 받지 못했어요. 다시 말씀해 보세요.');
+    hist.push({ role: 'assistant', text: full.trim(), at: (Date.now() - c.t0) / 1000, lat }); feed(true); tk && tk.end();
+    if (c.ear) { c.base = ''; c.text = ''; recStart(); }
+  }).catch(e => { if (e && e.name === 'AbortError') { if (full.trim() && c.on && my === c.id) hist.push({ role: 'assistant', text: full.trim(), at: (Date.now() - c.t0) / 1000, lat }); return; } fail('서버에 연결하지 못했어요. 다시 말씀해 보세요.'); });
+}
+function speak(t){                     /* 한 번에 받은 말(첫 인사 등)도 같은 목소리 줄로 읽는다 */
+  cstate('speak'); const two = cast().sp.length > 1, lab = n => n === '대표' ? '대표님' : n === '사모' ? '사모님' : '남편분';
+  onSpeaker = (name, p) => { if (!c.on || c.s !== 'speak') return; if (two) $('cState').textContent = lab(name) + '이 말하는 중'; caption(lab(name), p); };
+  const tk = talker(() => { if (c.on) listen(); });
+  (t.match(/[^.!?…\n]+[.!?…]*["”']?|\n/g) || [t]).forEach(p => tk.push(p)); tk.end();
+  if (c.ear) { c.base = ''; c.text = ''; recStart(); }
+}
+function cut(){ if (isLive()) return; if (c.s === 'speak') { try { c.ac && c.ac.abort(); } catch (e) {} hush(); listen(); } }
+
+/* ---------- 실시간 대화형 (Gemini Live): 소리로 듣고 소리로 답한다 ---------- */
+const L = { ws: null, proc: null, msrc: null, t: 0, srcs: [], user: '', ai: '', uStart: 0, uEnd: 0, usage: null };
+const isLive = () => /live/.test((PRESETS.find(x => x.id === $('preset').value) || {}).tts || '');
+const isOA = () => (PRESETS.find(x => x.id === $('preset').value) || {}).tts === 'oa-live';
+const b64 = u8 => { let s = ''; for (let i = 0; i < u8.length; i += 0x8000) s += String.fromCharCode.apply(null, u8.subarray(i, i + 0x8000)); return btoa(s); };
+function liveFlush(){                    /* 한 차례가 끝나면 받아쓴 말을 대화 기록에 넣는다 */
+  const now = (Date.now() - c.t0) / 1000;
+  if (L.user.trim()) hist.push({ role: 'user', text: L.user.trim(), at: (L.uStart - c.t0) / 1000, dur: Math.max(1, ((L.uEnd || Date.now()) - L.uStart) / 1000) });
+  if (L.ai.trim()) { const last = hist[hist.length - 1];            /* 한 번의 답이 둘로 쪼개져 들어오면 이어 붙인다 */
+    if (last && last.role === 'assistant' && !L.user.trim()) last.text += ' ' + L.ai.trim(); else hist.push({ role: 'assistant', text: L.ai.trim(), at: L.aStart || now, lat: L.lat || 0 }); }
+  L.user = ''; L.ai = ''; L.uEnd = 0; L.aStart = 0; L.lat = 0;
+}
+function liveHush(){ L.srcs.forEach(s => { try { s.onended = null; s.stop(); } catch (e) {} }); L.srcs = []; L.t = 0; }
+function livePlay(data){
+  const a = c.actx, bin = atob(data), n = bin.length >> 1, f = new Float32Array(n);
+  for (let i = 0; i < n; i++) { let v = bin.charCodeAt(2 * i) | (bin.charCodeAt(2 * i + 1) << 8); if (v >= 32768) v -= 65536; f[i] = v / 32768; }
+  const buf = a.createBuffer(1, n, 24000); buf.copyToChannel(f, 0);
+  const s = a.createBufferSource(); s.buffer = buf; s.connect(a.destination); if (c.mix) s.connect(c.mix);
+  if (!L.srcs.length) { L.uEnd = L.uEnd || Date.now(); L.aStart = (Date.now() - c.t0) / 1000; if (L.vEnd) L.lat = Date.now() - L.vEnd; cstate('speak'); }
+  L.t = Math.max(a.currentTime + 0.03, L.t); s.start(L.t); L.t += buf.duration; L.srcs.push(s);
+  s.onended = () => { L.srcs = L.srcs.filter(x => x !== s); if (!L.srcs.length && c.on) { cstate('listen'); caption('', ''); if (L.wantRenew) setTimeout(liveRenew, 300); } };
+}
+function liveMic(ws){
+  if (!c.stream) return; const a = c.actx, ratio = a.sampleRate / 16000;
+  L.msrc = a.createMediaStreamSource(c.stream); L.proc = a.createScriptProcessor(4096, 1, 1); const mute = a.createGain(); mute.gain.value = 0;
+  L.proc.onaudioprocess = e => {
+    if (ws.readyState !== 1) return; const x = e.inputBuffer.getChannelData(0), n = Math.floor(x.length / ratio), o = new Int16Array(n); let loud = 0;
+    for (let i = 0; i < n; i++) { const st = Math.floor(i * ratio), en = Math.min(x.length, Math.floor((i + 1) * ratio)); let s = 0; for (let j = st; j < en; j++) s += x[j]; const v = Math.max(-1, Math.min(1, s / Math.max(1, en - st))); o[i] = v * 32767; loud += v * v; }
+    if (Math.sqrt(loud / n) > 0.02) L.vEnd = Date.now();                    /* 내가 마지막으로 소리 낸 때 → 대표가 말 시작하기까지 걸린 시간 재기 */
+    ws.send(JSON.stringify({ realtimeInput: { audio: { data: b64(new Uint8Array(o.buffer)), mimeType: 'audio/pcm;rate=16000' } } }));
+  };
+  L.msrc.connect(L.proc); L.proc.connect(mute); mute.connect(a.destination);
+}
+function liveStop(){ if (L.pc) { try { L.dc && L.dc.close(); L.pc.close(); } catch (e) {} L.pc = L.dc = null; try { L.au && (L.au.srcObject = null); } catch (e) {} liveFlush(); return; }
+  const ws = L.ws; L.ws = null; try { ws && ws.close(); } catch (e) {} try { L.proc && L.proc.disconnect(); L.msrc && L.msrc.disconnect(); } catch (e) {} L.proc = L.msrc = null; liveHush(); if (ws) liveFlush(); }
+async function liveStart(greet){ if (!L.keep) { L.usage = null; } return isOA() ? oaStart(greet) : gmStart(greet); }
+/* 긴 연습: 대표가 말을 마친 틈에 지난 대화를 넘겨주며 새 연결로 갈아탄다 (OpenAI 60분 한도, Gemini 10분 한도와 요금 절약) */
+async function liveRenew(){
+  if (L.renewing || !c.on) return; L.renewing = true; L.wantRenew = false;
+  liveStop(); L.keep = true; try { await liveStart(''); } finally { L.keep = false; L.renewing = false; }
+}
+/* OpenAI 실시간: 브라우저가 직접 WebRTC 로 연결 (소리는 오디오 트랙, 글자·사용량은 데이터 채널) */
+async function oaStart(greet){
+  cstate('idle', '연결하는 중…'); const my = c.id; let r; L.user = L.ai = ''; L.usage = L.usage || { in: 0, out: 0, n: 0, cached: 0 }; L.vEnd = 0; L.connAt = Date.now();
+  try { r = await fetch(EP, { method: 'POST', body: JSON.stringify({ action: 'rp2', sub: 'oatok', pass: TP(), history: wire(), preset: $('preset').value, stage, cast: $('cast').value, rel: $('rel').value, level: $('level').value, style: $('style').value, case: caseObj(), who: $('who').value.trim(), branch: $('branch').value.trim() }) }).then(x => x.json()); } catch (e) { r = { ok: false }; }
+  if (!c.on || my !== c.id) return;
+  if (!r.ok) return cstate('idle', r.error || '연결하지 못했어요. 끝내기를 눌러 주세요.');
+  if (!c.stream) return cstate('idle', '마이크를 쓸 수 없어 연결하지 못했어요.');
+  const pc = new RTCPeerConnection(); L.pc = pc; const au = new Audio(); au.autoplay = true; L.au = au;
+  pc.ontrack = e => { au.srcObject = e.streams[0]; if (c.mix) { try { c.actx.createMediaStreamSource(e.streams[0]).connect(c.mix); } catch (x) {} } };
+  c.stream.getAudioTracks().forEach(t => pc.addTrack(t, c.stream));
+  const dc = pc.createDataChannel('oai-events'); L.dc = dc;
+  dc.onopen = () => { cstate('listen'); if (greet) { dc.send(JSON.stringify({ type: 'conversation.item.create', item: { type: 'message', role: 'user', content: [{ type: 'input_text', text: greet }] } })); dc.send(JSON.stringify({ type: 'response.create' })); } };
+  dc.onmessage = e => {
+    if (L.pc !== pc || !c.on) return; const m = JSON.parse(e.data), t = m.type;
+    if (t === 'input_audio_buffer.speech_started') { if (L.ai.trim()) liveFlush(); L.uStart = Date.now(); cstate('listen'); }
+    else if (t === 'input_audio_buffer.speech_stopped') { L.vEnd = L.uEnd = Date.now(); }
+    else if (t === 'conversation.item.input_audio_transcription.completed') { L.user = (L.user + ' ' + (m.transcript || '')).trim(); if (c.s !== 'speak') caption('나', L.user); if (L.ai.trim()) liveFlush(); }
+    else if (t === 'output_audio_buffer.started') { L.aStart = (Date.now() - c.t0) / 1000; if (L.vEnd) L.lat = Date.now() - L.vEnd; cstate('speak'); }
+    else if (t === 'output_audio_buffer.stopped' || t === 'output_audio_buffer.cleared') { if (c.on) { cstate('listen'); caption('', ''); if (Date.now() - L.connAt > 50 * 60000) setTimeout(liveRenew, 300); } }
+    else if (t === 'response.output_audio_transcript.delta') { L.ai += m.delta || ''; caption('대표님', L.ai); }
+    else if (t === 'response.done') { const u = (m.response && m.response.usage) || {}; L.usage.in += u.input_tokens || 0; L.usage.out += u.output_tokens || 0; L.usage.cached += ((u.input_token_details || {}).cached_tokens) || 0; L.usage.n++; if (!L.user.trim()) return; liveFlush(); }
+    else if (t === 'error') console.warn('OpenAI', m.error);
+  };
+  try {
+    const offer = await pc.createOffer(); await pc.setLocalDescription(offer);
+    const ans = await fetch('https://api.openai.com/v1/realtime/calls', { method: 'POST', body: offer.sdp, headers: { Authorization: 'Bearer ' + r.secret, 'Content-Type': 'application/sdp' } });
+    if (!ans.ok) throw new Error('HTTP ' + ans.status);
+    await pc.setRemoteDescription({ type: 'answer', sdp: await ans.text() });
+  } catch (e) { if (c.on) cstate('idle', '연결하지 못했어요 (' + e.message + '). 끝내기를 눌러 주세요.'); }
+}
+async function gmStart(greet){
+  cstate('idle', '연결하는 중…'); const my = c.id; let r; L.user = L.ai = ''; L.usage = L.usage || { in: 0, out: 0, n: 0 }; L.vEnd = 0; L.turns = 0;
+  try { r = await fetch(EP, { method: 'POST', body: JSON.stringify({ action: 'rp2', sub: 'gmtok', pass: TP(), history: wire(), preset: $('preset').value, stage, cast: $('cast').value, rel: $('rel').value, level: $('level').value, style: $('style').value, case: caseObj(), who: $('who').value.trim(), branch: $('branch').value.trim() }) }).then(x => x.json()); } catch (e) { r = { ok: false }; }
+  if (!c.on || my !== c.id) return;
+  if (!r.ok) return cstate('idle', r.error || '연결하지 못했어요. 끝내기를 눌러 주세요.');
+  const ws = new WebSocket(r.url); L.ws = ws;
+  ws.onopen = () => ws.send(JSON.stringify(r.setup));
+  ws.onclose = e => { if (c.on && L.ws === ws && !L.renewing) { L.ws = null; return liveRenew(); } if (c.on && L.ws === ws) cstate('idle', '연결이 끊겼어요 (' + (e.reason || e.code) + '). 끝내기를 눌러 주세요.'); };
+  ws.onmessage = async e => {
+    const m = JSON.parse(typeof e.data === 'string' ? e.data : await e.data.text()); if (L.ws !== ws || !c.on) return;
+    if (m.setupComplete) { liveMic(ws); if (greet) ws.send(JSON.stringify({ realtimeInput: { text: greet } })); return cstate('listen'); }
+    if (m.usageMetadata) { L.usage.in += m.usageMetadata.promptTokenCount || 0; L.usage.out += (m.usageMetadata.responseTokenCount || 0) + (m.usageMetadata.thoughtsTokenCount || 0); L.usage.n++; }
+    if (m.goAway) { L.wantRenew = true; if (!L.srcs.length && c.s !== 'speak') setTimeout(liveRenew, 300); }
+    const sc = m.serverContent; if (!sc) return;
+    if (sc.inputTranscription && sc.inputTranscription.text) { if (!L.user) L.uStart = Date.now(); L.user += sc.inputTranscription.text; if (c.s !== 'speak') caption('나', L.user); }
+    if (sc.outputTranscription && sc.outputTranscription.text) { L.ai += sc.outputTranscription.text; caption('대표님', L.ai); }
+    for (const p of ((sc.modelTurn && sc.modelTurn.parts) || [])) if (p.inlineData && p.inlineData.data) livePlay(p.inlineData.data);
+    if (sc.interrupted) { liveHush(); liveFlush(); cstate('listen'); }
+    if (sc.turnComplete) { liveFlush(); if (++L.turns >= 5) { L.wantRenew = true; if (!L.srcs.length) setTimeout(liveRenew, 300); } }
+  };
+}
+
+function ring(){ return new Promise(res => { try { const a = c.actx, g = a.createGain(); g.gain.value = 0; g.connect(a.destination);
+  [440, 480].forEach(f => { const o = a.createOscillator(); o.frequency.value = f; o.connect(g); o.start(); o.stop(a.currentTime + 3.1); });
+  const n = a.currentTime; [[0, .1], [1, 0], [1.9, .1], [2.9, 0]].forEach(([t, v]) => g.gain.setValueAtTime(v, n + t)); setTimeout(res, 3300); } catch (e) { res(); } }); }
+function meter(){
+  cancelAnimationFrame(c.raf); const bars = [...$('cBars').children], buf = c.an ? new Uint8Array(c.an.fftSize) : null;
+  (function loop(){ if (!c.on) return; let lv = 0; const now = Date.now() / 160;
+    if (c.s === 'listen' && c.an) { c.an.getByteTimeDomainData(buf); let s = 0; for (let i = 0; i < buf.length; i++) { const d = (buf[i] - 128) / 128; s += d * d; } lv = Math.min(1, Math.sqrt(s / buf.length) * 7); }
+    else if (c.s === 'speak') lv = .5 + .3 * Math.sin(now * 1.7);
+    bars.forEach((b, i) => b.style.height = (6 + lv * (8 + 14 * Math.abs(Math.sin(now + i * 1.3)))) + 'px');
+    c.raf = requestAnimationFrame(loop); })();
+}
+function sceneUrl(){                   /* 만나는 사람의 성별·나이대에 맞는 장면 */
+  const k = $('cast').value, age = +$('age').value || 50, band = age < 40 ? '30' : age < 60 ? '50' : '60', fac = /제조|공장|건설|물류|운수|자동차|기계|철강|식품/.test($('ind').value);
+  if (stage === 'TA') return 'rp-live/img/scene-phone.jpg';
+  if (k.length > 1) return 'rp-live/img/v2/couple.jpg';
+  if (k === 'm' && fac && band !== '30') return 'rp-live/img/v2/fac' + band + '.jpg';
+  return 'rp-live/img/v2/' + (k === 'f' ? 'f' : 'm') + band + '.jpg';
+}
+
+async function start(){
+  if (c.on || !ready()) return;
+  if (!$('who').value.trim()) { $('state').textContent = '연습하는 사람 이름(또는 호칭)을 넣어 주세요. 한 사람당 하루 5번까지 연습할 수 있어요.'; $('who').focus(); return; }
+  save(); const sg = STAGE[stage]; hist = []; c.on = true; c.id = Date.now(); c.ear = $('cEar').checked; c.chunks = [];
+  if (c.url) { URL.revokeObjectURL(c.url); c.url = ''; }
+  const ui = $('callUI'); ui.classList.add('on'); ui.classList.remove('live'); cstate('idle', ''); caption('', '');
+  $('cScene').style.backgroundImage = `url(${sceneUrl()})`; sceneVideo(sceneUrl());
+  $('cCut').hidden = isLive();   /* 실시간 대화형은 그냥 말을 시작하면 대표가 멈춘다 */
+  const who = [$('cast').selectedOptions[0].textContent, $('ind').value, $('age').value && $('age').value + '세', $('rel').selectedOptions[0].textContent, $('level').selectedOptions[0].textContent.replace(/\s*\(.*/, '')].filter(Boolean).join(' · ');
+  $('cTitle').textContent = sg.name; $('cWhat').textContent = sg.name; $('cSub').textContent = who; $('cWho').textContent = who + ' — ' + sg.first;
+  $('cTime').textContent = '00:00'; $('cDot').style.visibility = 'hidden';
+  try { speechSynthesis.cancel(); speechSynthesis.speak(new SpeechSynthesisUtterance(' ')); } catch (e) {}   /* 소리 재생 허락 */
+  try {
+    c.actx = c.actx || new (window.AudioContext || window.webkitAudioContext)(); if (c.actx.state === 'suspended') await c.actx.resume();
+    c.stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    c.an = c.actx.createAnalyser(); c.an.fftSize = 512; c.actx.createMediaStreamSource(c.stream).connect(c.an);
+    c.mix = null; if (isLive()) { c.mix = c.actx.createMediaStreamDestination(); c.actx.createMediaStreamSource(c.stream).connect(c.mix); }   /* 실시간 대화형은 내 목소리와 대표 목소리를 함께 녹음 */
+    if ($('cRec').checked && window.MediaRecorder) { c.mr = new MediaRecorder(c.mix ? c.mix.stream : c.stream); c.mr.ondataavailable = e => { if (e.data.size) c.chunks.push(e.data); }; }
+  } catch (e) { c.stream = null; c.an = null; c.mr = null; }   /* 마이크 녹음이 안 돼도 대화는 계속 */
+  for (const n of [3, 2, 1]) { if (!c.on) return; const el = $('cNum'); el.textContent = n; el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop'); await new Promise(r => setTimeout(r, 950)); }
+  if (!c.on) return;
+  ui.classList.add('live'); c.t0 = Date.now();
+  if (c.mr) { try { c.mr.start(1000); $('cDot').style.visibility = 'visible'; } catch (e) { c.mr = null; } }
+  c.tick = setInterval(() => { const s = Math.floor((Date.now() - c.t0) / 1000), lim = (+$('dur').value || 30) * 60;
+    if (s >= lim) return end(); if (s === lim - 60 && c.s !== 'speak') $('cState').textContent = '1분 남았어요. 마무리해 주세요.'; $('cTime').textContent = String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); }, 500);
+  meter();
+  if (isLive()) { if (stage === 'TA') { cstate('idle', '전화 거는 중…'); await ring(); if (!c.on) return; } return liveStart(stage === 'TA' ? '(전화벨이 울려 전화를 받았다. "네, 여보세요" 하고 짧게 받는다.)' : ''); }
+  if (stage === 'TA') { cstate('idle', '전화 거는 중…'); await ring(); if (!c.on) return; const hello = '네, 여보세요.'; hist.push({ role: 'assistant', text: hello, at: (Date.now() - c.t0) / 1000, local: true }); speak(hello); return; }
+  listen();
+}
+function end(){
+  if (!c.on) return; c.on = false; clearInterval(c.tick); clearTimeout(c.fillT); cancelAnimationFrame(c.raf); recStop(); hush(); liveStop();
+  const total = (Date.now() - c.t0) / 1000;
+  const done = () => { if (c.stream) { c.stream.getTracks().forEach(t => t.stop()); c.stream = null; } $('callUI').classList.remove('on', 'live'); result(total); };
+  if (c.mr && c.mr.state !== 'inactive') { const mr = c.mr; mr.onstop = () => { const b = new Blob(c.chunks, { type: mr.mimeType || 'audio/webm' }); if (b.size) c.url = URL.createObjectURL(b); c.mr = null; done(); }; try { mr.stop(); } catch (e) { done(); } } else done();
+}
+
+/* ---------- 결과: 다시 듣기 · 말하기 지표 · 피드백 ---------- */
+const mm = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+function result(total){
+  const me = hist.filter(m => m.role === 'user'), ai = hist.filter(m => m.role === 'assistant');
+  if (!me.length) { $('state').textContent = '주고받은 말이 없어요. 다시 시작해 보세요.'; return; }
+  $('setup').hidden = true; $('result').hidden = false; scrollTo(0, 0);
+  const len = t => t.replace(/\s/g, '').length, sum = (a, f) => a.reduce((x, m) => x + f(m), 0);
+  const myLen = sum(me, m => len(m.text)), aiLen = sum(ai, m => len(m.text)), myDur = sum(me, m => m.dur || 0);
+  const q = sum(me, m => (m.text.match(/\?|까요|나요|인가요|신가요|습니까|시죠|일까요|으세요(?=[\s?.,]|$)/g) || []).length);
+  const fill = sum(me, m => (m.text.match(/(^|\s)(음+|어+|그+|이제|약간|뭐랄까|그러니까)(?=\s|$)/g) || []).length);
+  const longest = me.reduce((x, m) => Math.max(x, m.dur || 0), 0), sg = STAGE[stage], d = new Date();
+  const base = ['RP', stage, ($('who').value || '이름없음').replace(/[\\/:*?"<>|\s]/g, ''), d.getFullYear() + String(d.getMonth() + 1).padStart(2, '0') + String(d.getDate()).padStart(2, '0')].join('_');
+  const rid = base + '_' + String(d.getHours()).padStart(2, '0') + String(d.getMinutes()).padStart(2, '0') + String(d.getSeconds()).padStart(2, '0');
+  const txt = `[${sg.name}] ${$('who').value || ''} ${d.toLocaleString('ko-KR')}\n관계 ${$('rel').value} · 난이도 ${$('level').selectedOptions[0].textContent} · ${$('ind').value} · ${mm(total)}\n\n` + hist.map(m => `${mm(m.at || 0)} ${m.role === 'user' ? '나' : '대표'}: ${m.text}`).join('\n');
+  const turl = URL.createObjectURL(new Blob([txt], { type: 'text/plain;charset=utf-8' }));
+  $('rv').innerHTML = `<h2>다시 듣기 · ${esc(sg.name)}</h2>
+    ${c.url ? `<audio id="rvA" controls src="${c.url}"></audio><p class="hint">${isLive() ? '나와 대표님의 대화 녹음' : '내 목소리 녹음'}입니다. 말풍선의 «듣기»를 누르면 그 대목부터 나옵니다. 녹음·대화록은 아래 버튼으로 내 기기에 내려받을 수 있고, 팀 기록에도 저장되어 관리자가 볼 수 있어요.</p>` : '<p class="hint">녹음이 없어요 (마이크 허락이 없었거나 녹음을 꺼 둠).</p>'}
+    <div class="stats">
+      <div class="stat"><b>${mm(total)}</b><span>걸린 시간</span></div>
+      <div class="stat"><b>${Math.round(myLen / Math.max(1, myLen + aiLen) * 100)}%</b><span>내가 말한 비율 (글자 수)</span></div>
+      <div class="stat"><b>${q}</b><span>질문으로 보이는 말 (대략)</span></div>
+      <div class="stat"><b>${myDur > 3 ? Math.round(myLen / myDur * 60) : '–'}</b><span>말 빠르기 (1분당 글자, 대략)</span></div>
+      <div class="stat"><b>${Math.round(longest)}초</b><span>가장 길게 혼자 말한 시간</span></div>
+      <div class="stat"><b>${fill}</b><span>군말 (받아쓰기가 빼먹기도 해요)</span></div>
+    </div>
+    <div class="row">${c.url ? `<a class="btn" href="${c.url}" download="${base}.webm">녹음 내려받기</a>` : ''}<a class="btn" href="${turl}" download="${base}.txt">대화록 내려받기</a></div>
+    <div class="log">${hist.map(m => `<div class="b ${m.role === 'user' ? 'me' : 'ai'}"><span class="w">${m.role === 'user' ? '나' : cast().who} · ${mm(m.at || 0)}${m.role === 'user' && c.url ? ` <button type="button" data-at="${Math.max(0, (m.at || 0) - .4).toFixed(1)}">듣기</button>` : ''}</span>${esc(m.text)}</div>`).join('')}</div>`;
+  $('rv').onclick = e => { const b = e.target.closest('[data-at]'), a = $('rvA'); if (b && a) { a.currentTime = +b.dataset.at; a.play(); } };
+  if (c.url) fetch(c.url).then(r => r.blob()).then(b => new Promise(res => { const fr = new FileReader(); fr.onload = () => res(String(fr.result).split(',')[1] || ''); fr.readAsDataURL(b); })).then(b64 => b64 && fetch(EP, { method: 'POST', body: JSON.stringify({ action: 'rp2', sub: 'audio', pass: TP(), rid, b64 }) })).catch(() => {});
+  if (me.length < 2) { $('fb').innerHTML = '<p class="hint">두세 번 이상 주고받아야 피드백을 받을 수 있어요.</p>'; return; }
+  $('fb').innerHTML = '<p class="hint">피드백을 만드는 중… (20~40초)</p>';
+  post({ history: wire(), end: true, rid, total: Math.round(total) }).then(r => {
+    if (!r.ok) { $('fb').innerHTML = `<p class="hint">${esc(r.error || '피드백을 받지 못했어요.')}</p>`; return; }
+    $('fb').innerHTML = '<h2>피드백</h2>' + (r.score !== '' && r.score != null ? `<div class="score">${esc(r.score)}점 / 100</div>` : '') + md(r.feedback) +
+      '<div class="row"><a class="btn" id="dlAll">대화록 + 피드백 내려받기</a></div><p class="hint">이 연습의 녹음·대화·피드백은 팀 기록에 저장되어, 관리자가 볼 수 있어요.</p>';
+    const all = txt + `\n\n[점수] ${r.score}\n\n[피드백]\n${r.feedback || ''}\n`; const a = $('dlAll'); a.href = URL.createObjectURL(new Blob([all], { type: 'text/plain;charset=utf-8' })); a.download = rid + '_피드백포함.txt';
+  }).catch(() => { $('fb').innerHTML = '<p class="hint">서버에 연결하지 못해 피드백을 받지 못했어요. 대화록은 위에서 내려받을 수 있습니다.</p>'; });
+}
+/* 아주 작은 마크다운: 제목·표·목록·굵게 (허브 roleplay.html 과 같은 규칙) */
+function md(t){
+  const lines = String(t || '').split('\n'); let out = '', tbl = [], list = false;
+  const inl = s => esc(s).replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  const flushT = () => { if (!tbl.length) return; const rows = tbl.filter(r => !/^\s*\|?\s*:?-{2,}/.test(r)); out += '<table>' + rows.map((r, i) => '<tr>' + r.replace(/^\||\|$/g, '').split('|').map(x => i ? `<td>${inl(x.trim())}</td>` : `<th>${inl(x.trim())}</th>`).join('') + '</tr>').join('') + '</table>'; tbl = []; };
+  const flushL = () => { if (list) { out += '</ul>'; list = false; } };
+  lines.forEach(l => {
+    if (/^\s*\|/.test(l)) { flushL(); tbl.push(l.trim()); return; } flushT();
+    const h = l.match(/^(#{1,4})\s+(.*)/); if (h) { flushL(); out += `<h3>${inl(h[2])}</h3>`; return; }
+    const li = l.match(/^\s*(?:[-*]|\d+[.)])\s+(.*)/); if (li) { if (!list) { out += '<ul>'; list = true; } out += `<li>${inl(li[1])}</li>`; return; }
+    flushL(); if (l.trim()) out += `<p>${inl(l)}</p>`;
+  });
+  flushT(); flushL(); return out;
+}
+
+/* ---------- 연결 ---------- */
+$('fromAp').onclick = () => {   /* 업체 분석에 넣어 둔 업체. 상호·대표 이름은 가져오지 않음 */
+  try {
+    const a = JSON.parse(localStorage.getItem('ap-card-v0') || 'null');
+    if (!a) { $('state').textContent = '업체 분석에 넣은 업체가 없어요. 업체 분석에서 먼저 숫자를 넣어 주세요.'; return; }
+    const map = { ind: a.ind, form: a.form_ === '개인' ? '개인사업자' : (a.form_ ? '법인' : ''), sales: a.sales, profit: a.profit, age: a.age, kids: a.kids };
+    Object.entries(map).forEach(([k, v]) => { if (v !== undefined && v !== null && v !== '') $(k).value = v; });
+    if (a.rel) $('rel').value = a.rel; if (a.style) $('style').value = a.style;
+    const bits = [a.notes, a.k1, a.k2, a.k3].filter(Boolean).join(' / '); if (bits) $('notes').value = bits.slice(0, 600);
+    pickBrief(a); save(); $('state').textContent = BRIEF ? '업체 분석의 숫자·진단·꺼낼 이슈 순서를 AI 대표님이 알고 나와요. 상황 칸에 상호·실명이 있으면 지워 주세요.' : '업체 분석의 업종·숫자·상황을 불러왔어요. 상황 칸에 상호·실명이 있으면 지워 주세요.';
+  } catch (e) { $('state').textContent = '불러오지 못했어요.'; }
+};
+document.querySelectorAll('#stages button').forEach(b => b.onclick = () => setStage(b.dataset.v));
+FIELDS.concat(CHECKS, ['cVoice']).forEach(k => $(k).addEventListener('input', () => { showRanges(); save(); }));
+['cast', 'age'].forEach(k => $(k).addEventListener('input', () => { fitVoice(true); save(); }));
+$('cTest').onclick = () => { hush(); const t = talker(() => {}); ['안녕하세요.', '오늘 무슨 일로 오셨어요?', '제가 시간이 많지는 않아서요.'].forEach(x => t.push(x)); t.end(); };
+$('briefX').onclick = () => { BRIEF = ''; showBrief(); save(); };
+$('go').onclick = start; $('cEnd').onclick = end; $('cCut').onclick = cut;
+$('cCapBtn').onclick = () => { c.cap = !c.cap; $('cCap').classList.toggle('off', !c.cap); $('cCapBtn').classList.toggle('on', c.cap); $('cCapBtn').textContent = c.cap ? '자막 끄기' : '자막 켜기'; };
+$('again').onclick = () => { $('result').hidden = true; $('setup').hidden = false; start(); };
+$('back').onclick = () => { $('result').hidden = true; $('setup').hidden = false; scrollTo(0, 0); };
+document.addEventListener('keydown', e => { if (!c.on) return; if (e.code === 'Space') { e.preventDefault(); cut(); } if (e.key === 'Escape') end(); });
+Promise.resolve({ presets: [{ id: 'oa-live', label: 'OpenAI 실시간 (기본)', tts: 'oa-live', need: [], ok: true }, { id: 'live', label: 'Gemini Live 실시간', tts: 'live', need: [], ok: true }], default: 'oa-live' }).then(j => { PRESETS = j.presets || []; const keep = new URLSearchParams(location.search).get('preset') || (load().preset) || j.default;
+  $('preset').innerHTML = PRESETS.map(x => `<option value="${x.id}"${x.ok ? '' : ' disabled'}>${esc(x.label)}${x.need.length ? ' — 열쇠 필요: ' + x.need.join(', ') + (x.ok ? ' (없으면 브라우저 목소리)' : '') : ''}</option>`).join('');
+  const ok = PRESETS.find(x => x.id === keep && x.ok) || PRESETS.find(x => !x.need.length); if (ok) $('preset').value = ok.id; const pl = PRESETS.find(x => x.id === $('preset').value); if (pl) document.title = pl.label.replace(/\s*\(.*/, '') + ' | 실전 롤플레이'; }).catch(() => {});
+const saved = load(); wantVoice = saved.voice || ''; setStage(stage); showRanges(); loadVoices();
+if (window.speechSynthesis) speechSynthesis.onvoiceschanged = loadVoices;
+if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) { $('state').textContent = '이 브라우저에서는 마이크를 쓸 수 없어요. 크롬이나 엣지로 열어 주세요 (카톡 안에서 열었다면 «다른 브라우저로 열기»).'; }
+
+})();
+</script>
+</body>
+</html>
